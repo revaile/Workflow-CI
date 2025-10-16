@@ -1,0 +1,6 @@
+artifact_location: file:///C:/DICODING/Workflow-CI/mlruns/835707632605641568
+creation_time: 1760648476783
+experiment_id: '835707632605641568'
+last_update_time: 1760648476783
+lifecycle_stage: active
+name: RandomForest_CI
