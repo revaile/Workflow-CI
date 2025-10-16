@@ -1,3 +1,4 @@
+artifact_path: file:///C:/DICODING/Workflow-CI/mlruns/0/models/m-7f7ccc8c42624837be2986d46e591c24/artifacts
 flavors:
   python_function:
     env:
@@ -13,8 +14,9 @@ flavors:
     serialization_format: cloudpickle
     sklearn_version: 1.7.2
 mlflow_version: 3.4.0
-model_id: null
+model_id: m-7f7ccc8c42624837be2986d46e591c24
 model_size_bytes: 2440762
-model_uuid: ca1dba2596ec415b8105a88acedba6c8
+model_uuid: m-7f7ccc8c42624837be2986d46e591c24
 prompts: null
-utc_time_created: '2025-10-16 23:19:12.928455'
+run_id: 3fc1ba15f9e04987aea30b586178a18a
+utc_time_created: '2025-10-16 23:19:07.863547'

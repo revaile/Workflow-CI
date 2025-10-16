@@ -62,12 +62,19 @@ try:
 except Exception as e:
     print(f"⚠️ Terjadi error saat logging MLflow: {e}")
 
-# 5️⃣ Simpan Model ke .pkl (untuk upload-artifact / Docker)
+import shutil
+
+# 5️⃣ Simpan Model sebagai MLflow Model Folder
 model_dir = "MLProject" if not is_ci else "."
 model_mlflow_path = os.path.join(model_dir, "random_forest_workflow")
 
+# 🚨 Bersihkan folder lama jika ada (hindari error overwrite)
+if os.path.exists(model_mlflow_path):
+    shutil.rmtree(model_mlflow_path)
+
 mlflow.sklearn.save_model(model, model_mlflow_path)
 print(f"💾 Model MLflow tersimpan di: {os.path.abspath(model_mlflow_path)}")
+
 
 
 
