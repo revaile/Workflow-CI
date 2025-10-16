@@ -14,19 +14,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Force remove any old conda environments
+      - name: Remove old Conda environments
         run: |
           conda env remove --name randomforest_env || true
           conda env remove --name titanic_env || true
+          conda env remove --name titanic_env_ci || true
           conda clean --all --yes
+
 
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: titanic_env_ci
+          activate-environment: titanic_env_v2
           environment-file: MLProject/conda.yaml
           auto-activate-base: false
+          show-channel-urls: true
+
 
 
       - name: Install MLflow
