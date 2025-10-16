@@ -1,0 +1,10 @@
+artifact_location: file:///C:/DICODING/Workflow-CI/mlruns/835707632605641568/models/m-34be9e4c62e84565bc78e589b9398c41/artifacts
+creation_timestamp: 1760650950148
+experiment_id: '835707632605641568'
+last_updated_timestamp: 1760650955020
+model_id: m-34be9e4c62e84565bc78e589b9398c41
+model_type: null
+name: model
+source_run_id: 1c5a235f8a6341faadfcecd1a3ceb722
+status: 2
+status_message: null

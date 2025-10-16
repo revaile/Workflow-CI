@@ -9,7 +9,6 @@ import os
 import platform
 
 # 1️⃣ Baca dataset hasil preprocessing
-# (Tambahkan logika auto-detect supaya tetap bisa jalan di GitHub Actions)
 data_path_local = os.path.join("MLProject", "titanicdataset_preprocessing", "train_preprocessed.csv")
 data_path_ci = os.path.join("titanicdataset_preprocessing", "train_preprocessed.csv")
 
@@ -42,7 +41,8 @@ if active_run is None:
     mlflow.set_experiment("RandomForest_CI")
     run_context = mlflow.start_run(run_name="RandomForest_CI_Run")
 else:
-    run_context = active_run  # pakai run yang sudah dibuat oleh mlflow run
+    # 🧠 Fix utama: gunakan nested=True supaya tidak bentrok dengan run luar
+    run_context = mlflow.start_run(run_name="Nested_Run", nested=True)
 
 # 6️⃣ Training model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
