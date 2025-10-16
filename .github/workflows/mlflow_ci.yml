@@ -38,8 +38,12 @@ jobs:
           pip install mlflow dagshub
 
       - name: Run MLflow Project (Training)
+        shell: bash -l {0}
         run: |
-          mlflow run MLProject -P data_path=titanicdataset_preprocessing/train_preprocessed.csv
+          eval "$(conda shell.bash hook)"
+          conda activate titanic_env_v2
+          mlflow run MLProject -P data_path=titanicdataset_preprocessing/train_preprocessed.csv --no-conda
+
 
       - name: Upload model artifact
         uses: actions/upload-artifact@v4
