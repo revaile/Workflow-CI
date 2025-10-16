@@ -42,7 +42,7 @@ jobs:
         run: |
           eval "$(conda shell.bash hook)"
           conda activate titanic_env_v2
-          mlflow run MLProject -P data_path=titanicdataset_preprocessing/train_preprocessed.csv --no-conda
+          mlflow run MLProject -P data_path=titanicdataset_preprocessing/train_preprocessed.csv
 
 
       - name: Upload model artifact
