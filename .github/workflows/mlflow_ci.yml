@@ -14,10 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Remove old conda environments
+      - name: Force remove any old conda environments
         run: |
           conda env remove --name randomforest_env || true
           conda env remove --name titanic_env || true
+          conda clean --all --yes
+
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
