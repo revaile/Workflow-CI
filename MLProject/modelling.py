@@ -34,15 +34,16 @@ if platform.system() == "Windows":
     mlflow.set_tracking_uri(f"file:///{tracking_path.replace(os.sep, '/')}")
 else:
     mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
+# 5️⃣ Cek apakah ada run aktif (CI) atau tidak (lokal)
+active_run = mlflow.active_run()
 
-# 5️⃣ Cek apakah dijalankan dari MLflow CLI (CI/CD) atau manual
-if mlflow.active_run() is None:
-    # Lokal: buat experiment baru
+if active_run is None:
+    # 💻 Lokal: tidak ada run aktif → buat baru
     mlflow.set_experiment("RandomForest_CI")
     mlflow.start_run(run_name="RandomForest_CI_Run")
 else:
-    # CI: gunakan nested run agar tidak bentrok
-    mlflow.start_run(run_name="RandomForest_CI_SubRun", nested=True)
+    # 🤖 CI/CD: sudah ada run aktif dari 'mlflow run' → pakai nested run
+    mlflow.start_run(run_name="Nested_CI_Run", nested=True)
 
 
 # 6️⃣ Training model
