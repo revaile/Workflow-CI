@@ -9,21 +9,27 @@ import numpy as np
 import os
 import joblib
 
-# 🔧 Argument parser (parameter dari MLProject)
+# ================================
+# 🧩 Argument Parser
+# ================================
 parser = argparse.ArgumentParser()
 parser.add_argument("--test_size", type=float, default=0.2, help="Proporsi data test")
 parser.add_argument("--n_estimators", type=int, default=100, help="Jumlah pohon dalam Random Forest")
 parser.add_argument("--data_path", type=str, default="titanicdataset_preprocessing/train_preprocessed.csv", help="Path dataset hasil preprocessing")
 args = parser.parse_args()
 
-# 1️⃣ Setup DagsHub MLflow
+# ================================
+# 🔐 Inisialisasi DagsHub & MLflow
+# ================================
 dagshub.init(
-    repo_owner='revaile',
-    repo_name='Workflow-CI',
+    repo_owner='revaile',  
+    repo_name='Eksperimen_SML_Ade-Ripaldi-Nuralim',  
     mlflow=True
 )
 
-# 2️⃣ Baca dataset hasil preprocessing
+# ================================
+# 📂 Load Dataset
+# ================================
 data_path = args.data_path
 print(f"📂 Membaca dataset dari: {data_path}")
 
@@ -32,36 +38,53 @@ if not os.path.exists(data_path):
 
 df = pd.read_csv(data_path)
 
-# 3️⃣ Pisahkan fitur dan target
-X = df.drop(columns=["Survived"], errors="ignore").astype(float)
-y = df["Survived"] if "Survived" in df.columns else np.random.randint(0, 2, len(df))
+# ================================
+# 🧠 Pisahkan fitur dan target
+# ================================
+if "Survived" not in df.columns:
+    raise ValueError("❌ Kolom 'Survived' tidak ditemukan pada dataset!")
 
-# 4️⃣ Split data
+X = df.drop(columns=["Survived"]).astype(float)
+y = df["Survived"]
+
+# ================================
+# ✂️ Split data
+# ================================
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=args.test_size, random_state=42
 )
 
-# 5️⃣ Mulai MLflow run
+# ================================
+# 🚀 Training + Logging MLflow
+# ================================
 mlflow.set_experiment("Titanic_Retrain_Workflow")
+
 with mlflow.start_run(run_name="RandomForest_Workflow_Run"):
-    model = RandomForestClassifier(n_estimators=args.n_estimators, random_state=42)
+    print("🧠 Training model RandomForest...")
+    model = RandomForestClassifier(
+        n_estimators=args.n_estimators,
+        random_state=42
+    )
     model.fit(X_train, y_train)
 
+    # Prediksi dan evaluasi
     y_pred = model.predict(X_test)
-
     acc = accuracy_score(y_test, y_pred)
     prec = precision_score(y_test, y_pred)
     rec = recall_score(y_test, y_pred)
 
-    # Log metrics dan parameters
-    mlflow.log_param("n_estimators", args.n_estimators)
-    mlflow.log_param("test_size", args.test_size)
-    mlflow.log_param("data_path", data_path)
-    mlflow.log_metric("accuracy", acc)
-    mlflow.log_metric("precision", prec)
-    mlflow.log_metric("recall", rec)
+    # Log parameter, metric, dan artifact
+    mlflow.log_params({
+        "n_estimators": args.n_estimators,
+        "test_size": args.test_size,
+        "data_path": data_path
+    })
+    mlflow.log_metrics({
+        "accuracy": acc,
+        "precision": prec,
+        "recall": rec
+    })
 
-    # Simpan model dan log artifact
     model_path = "random_forest_workflow.pkl"
     joblib.dump(model, model_path)
     mlflow.log_artifact(model_path)
