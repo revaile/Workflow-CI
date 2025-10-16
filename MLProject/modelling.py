@@ -63,12 +63,12 @@ except Exception as e:
     print(f"⚠️ Terjadi error saat logging MLflow: {e}")
 
 # 5️⃣ Simpan Model ke .pkl (untuk upload-artifact / Docker)
-model_dir = "MLProject" if not is_ci else "."  # CI/CD: simpan langsung di root project
-os.makedirs(model_dir, exist_ok=True)
+model_dir = "MLProject" if not is_ci else "."
+model_mlflow_path = os.path.join(model_dir, "random_forest_workflow")
 
-model_pkl_path = os.path.join(model_dir, "random_forest_workflow.pkl")
-joblib.dump(model, model_pkl_path)
-print(f"💾 Model tersimpan di: {os.path.abspath(model_pkl_path)}")
+mlflow.sklearn.save_model(model, model_mlflow_path)
+print(f"💾 Model MLflow tersimpan di: {os.path.abspath(model_mlflow_path)}")
+
 
 
 print("🎯 Training & logging selesai tanpa error!")
