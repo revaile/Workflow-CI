@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 
-# 🚫 Bersihkan env lama (terutama di Windows)
+# 🚫 Bersihkan environment lama (khusus Windows agar tidak bentrok tracking URI)
 os.environ.pop("MLFLOW_TRACKING_URI", None)
 
 # 1️⃣ Load Dataset
@@ -23,9 +23,11 @@ y = df["Survived"] if "Survived" in df.columns else np.random.randint(0, 2, len(
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 2️⃣ Cek mode eksekusi (lokal vs CI)
+# 2️⃣ Deteksi mode eksekusi (lokal vs CI/CD)
 is_ci = os.getenv("GITHUB_ACTIONS") == "true"
+
 if not is_ci:
+    # Mode lokal: atur tracking URI agar hasil tersimpan ke folder mlruns lokal
     if platform.system() == "Windows":
         tracking_path = os.path.abspath(os.path.join(os.getcwd(), "mlruns"))
         mlflow.set_tracking_uri(f"file:///{tracking_path.replace(os.sep, '/')}")
@@ -45,21 +47,25 @@ rec = recall_score(y_test, y_pred)
 
 print(f"✅ Accuracy: {acc:.4f}, Precision: {prec:.4f}, Recall: {rec:.4f}")
 
-# 4️⃣ Logging ke MLflow
+# 4️⃣ Logging ke MLflow (skip otomatis jika dijalankan dari CLI di CI/CD)
 try:
-    with mlflow.start_run(run_name="RandomForest_CI_Run"):
-        mlflow.log_param("n_estimators", 100)
-        mlflow.log_metric("accuracy", acc)
-        mlflow.log_metric("precision", prec)
-        mlflow.log_metric("recall", rec)
-        mlflow.sklearn.log_model(model, "model")
-        print("📊 Metrik & model berhasil dilog ke MLflow.")
+    if not is_ci:
+        with mlflow.start_run(run_name="RandomForest_Local_Run"):
+            mlflow.log_param("n_estimators", 100)
+            mlflow.log_metric("accuracy", acc)
+            mlflow.log_metric("precision", prec)
+            mlflow.log_metric("recall", rec)
+            mlflow.sklearn.log_model(model, "model")
+            print("📊 Metrik & model berhasil dilog ke MLflow.")
+    else:
+        print("⚠️ Skip logging manual — MLflow CLI sudah handle run di CI/CD.")
 except Exception as e:
-    print(f"⚠️ Skip logging karena mode CI/CD otomatis — detail: {e}")
+    print(f"⚠️ Terjadi error saat logging MLflow: {e}")
 
-# 5️⃣ Simpan Model ke .pkl (untuk upload-artifact & Docker build)
-os.makedirs("MLProject", exist_ok=True)
-model_pkl_path = os.path.join("MLProject", "random_forest_workflow.pkl")
+# 5️⃣ Simpan Model ke .pkl (untuk upload-artifact / Docker)
+model_dir = os.path.join("MLProject")
+os.makedirs(model_dir, exist_ok=True)
+model_pkl_path = os.path.join(model_dir, "random_forest_workflow.pkl")
 joblib.dump(model, model_pkl_path)
 print(f"💾 Model tersimpan di: {model_pkl_path}")
 

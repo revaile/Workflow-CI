@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/DICODING/Workflow-CI/mlruns/0/16b3eda86d71415fad093bb247e101f3/artifacts
+end_time: 1760655171001
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 16b3eda86d71415fad093bb247e101f3
+run_name: RandomForest_Local_Run
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760655157969
+status: 3
+tags: []
+user_id: gothr
