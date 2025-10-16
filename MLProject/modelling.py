@@ -35,6 +35,7 @@ if platform.system() == "Windows":
 else:
     mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 # 4️⃣-5️⃣ Konfigurasi MLflow lintas OS dan mode eksekusi
+# 4️⃣ Konfigurasi MLflow lintas OS & mode eksekusi
 is_ci = os.getenv("GITHUB_ACTIONS") == "true"
 
 if not is_ci:
@@ -57,7 +58,6 @@ if not is_ci:
         mlflow.start_run(run_name="RandomForest_CI_Run")
     else:
         print(f"🟣 Sudah ada run aktif: {active_run.info.run_id}")
-
 
 
 # 6️⃣ Training model
