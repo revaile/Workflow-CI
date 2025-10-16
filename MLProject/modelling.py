@@ -9,7 +9,17 @@ import os
 import platform
 
 # 1️⃣ Baca dataset hasil preprocessing
-data_path = os.path.join("MLProject", "titanicdataset_preprocessing", "train_preprocessed.csv")
+# (Tambahkan logika auto-detect supaya tetap bisa jalan di GitHub Actions)
+data_path_local = os.path.join("MLProject", "titanicdataset_preprocessing", "train_preprocessed.csv")
+data_path_ci = os.path.join("titanicdataset_preprocessing", "train_preprocessed.csv")
+
+if os.path.exists(data_path_local):
+    data_path = data_path_local
+elif os.path.exists(data_path_ci):
+    data_path = data_path_ci
+else:
+    raise FileNotFoundError("❌ Dataset train_preprocessed.csv tidak ditemukan di path manapun.")
+
 df = pd.read_csv(data_path)
 
 # 2️⃣ Pisahkan fitur dan target
