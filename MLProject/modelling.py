@@ -19,7 +19,7 @@ y = df["Survived"] if "Survived" in df.columns else np.random.randint(0, 2, len(
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # 4️⃣ Tracking lokal agar bisa dicatat di artefak GitHub
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 mlflow.set_experiment("RandomForest_CI")
 
 with mlflow.start_run(run_name="RandomForest_CI_Run"):
