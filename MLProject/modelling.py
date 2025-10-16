@@ -28,28 +28,21 @@ y = df["Survived"] if "Survived" in df.columns else np.random.randint(0, 2, len(
 # 3️⃣ Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 4️⃣ Set tracking URI lintas OS
-if platform.system() == "Windows":
-    tracking_path = os.path.abspath(os.path.join(os.getcwd(), "mlruns"))
-    mlflow.set_tracking_uri(f"file:///{tracking_path.replace(os.sep, '/')}")
-else:
-    mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
-# 4️⃣-5️⃣ Konfigurasi MLflow lintas OS dan mode eksekusi
 # 4️⃣ Konfigurasi MLflow lintas OS & mode eksekusi
 is_ci = os.getenv("GITHUB_ACTIONS") == "true"
 
 if not is_ci:
-    # 💻 Mode lokal: set tracking URI manual
+    # 💻 Mode lokal
     if platform.system() == "Windows":
         tracking_path = os.path.abspath(os.path.join(os.getcwd(), "mlruns"))
         mlflow.set_tracking_uri(f"file:///{tracking_path.replace(os.sep, '/')}")
     else:
         mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 else:
-    # 🤖 Mode CI/CD: biarkan MLflow CLI atur tracking_uri
+    # 🤖 Mode CI/CD: biarkan MLflow CLI yang atur tracking URI
     print("🟡 Mode CI/CD terdeteksi — gunakan konfigurasi MLflow bawaan.")
 
-# Pastikan run dimulai hanya kalau lokal
+# 5️⃣ Pastikan run dimulai hanya kalau lokal
 active_run = mlflow.active_run()
 if not is_ci:
     if active_run is None:
@@ -58,7 +51,6 @@ if not is_ci:
         mlflow.start_run(run_name="RandomForest_CI_Run")
     else:
         print(f"🟣 Sudah ada run aktif: {active_run.info.run_id}")
-
 
 # 6️⃣ Training model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
