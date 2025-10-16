@@ -39,11 +39,13 @@ active_run = mlflow.active_run()
 
 if active_run is None:
     # 💻 Lokal: tidak ada run aktif → buat baru
+    print("🟢 Tidak ada run aktif — mode lokal.")
     mlflow.set_experiment("RandomForest_CI")
     mlflow.start_run(run_name="RandomForest_CI_Run")
 else:
-    # 🤖 CI/CD: sudah ada run aktif dari 'mlflow run' → pakai nested run
-    mlflow.start_run(run_name="Nested_CI_Run", nested=True)
+    # 🤖 CI/CD: sudah ada run aktif dari 'mlflow run' → jangan mulai run baru
+    print(f"🟡 Dijalankan di dalam run aktif: {active_run.info.run_id} (mode CI/CD).")
+
 
 
 # 6️⃣ Training model
