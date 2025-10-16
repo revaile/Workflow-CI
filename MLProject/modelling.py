@@ -11,8 +11,9 @@ import joblib
 
 # 🔧 Argument parser (parameter dari MLProject)
 parser = argparse.ArgumentParser()
-parser.add_argument("--test_size", type=float, default=0.2)
-parser.add_argument("--n_estimators", type=int, default=100)
+parser.add_argument("--test_size", type=float, default=0.2, help="Proporsi data test")
+parser.add_argument("--n_estimators", type=int, default=100, help="Jumlah pohon dalam Random Forest")
+parser.add_argument("--data_path", type=str, default="titanicdataset_preprocessing/train_preprocessed.csv", help="Path dataset hasil preprocessing")
 args = parser.parse_args()
 
 # 1️⃣ Setup DagsHub MLflow
@@ -23,7 +24,12 @@ dagshub.init(
 )
 
 # 2️⃣ Baca dataset hasil preprocessing
-data_path = os.path.join("titanicdataset_preprocessing", "train_preprocessed.csv")
+data_path = args.data_path
+print(f"📂 Membaca dataset dari: {data_path}")
+
+if not os.path.exists(data_path):
+    raise FileNotFoundError(f"❌ File dataset tidak ditemukan di {data_path}")
+
 df = pd.read_csv(data_path)
 
 # 3️⃣ Pisahkan fitur dan target
@@ -49,6 +55,8 @@ with mlflow.start_run(run_name="RandomForest_Workflow_Run"):
 
     # Log metrics dan parameters
     mlflow.log_param("n_estimators", args.n_estimators)
+    mlflow.log_param("test_size", args.test_size)
+    mlflow.log_param("data_path", data_path)
     mlflow.log_metric("accuracy", acc)
     mlflow.log_metric("precision", prec)
     mlflow.log_metric("recall", rec)
