@@ -8,7 +8,7 @@ import numpy as np
 import os
 
 # 1️⃣ Baca dataset hasil preprocessing
-data_path = os.path.join("namadataset_preprocessing", "train_preprocessed.csv")
+data_path = os.path.join("titanicdataset_preprocessing", "train_preprocessed.csv")
 df = pd.read_csv(data_path)
 
 # 2️⃣ Pisahkan fitur dan target
