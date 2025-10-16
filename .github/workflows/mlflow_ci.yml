@@ -14,14 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Remove old conda environment
+      - name: Remove old conda environments
         run: |
           conda env remove --name randomforest_env || true
+          conda env remove --name titanic_env || true
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: titanic_env
+          activate-environment: titanic_env_ci
           environment-file: MLProject/conda.yaml
           auto-activate-base: false
 

@@ -1,4 +1,4 @@
-name: titanic_env
+name: titanic_env_ci
 channels:
   - conda-forge
   - defaults
