@@ -18,26 +18,29 @@ y = df["Survived"] if "Survived" in df.columns else np.random.randint(0, 2, len(
 # 3️⃣ Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 4️⃣ Tracking lokal agar bisa dicatat di artefak GitHub
+# 4️⃣ Tracking lokal agar bisa dicatat di artefak GitHub Actions
+# Lokasi absolut agar sesuai path runner GitHub
 mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 mlflow.set_experiment("RandomForest_CI")
 
-with mlflow.start_run(run_name="RandomForest_CI_Run"):
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
+# ⚠️ Jangan panggil mlflow.start_run() — sudah otomatis dibuat oleh `mlflow run`
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
-    y_pred = model.predict(X_test)
+y_pred = model.predict(X_test)
 
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
+# Hitung metrik
+acc = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred)
+rec = recall_score(y_test, y_pred)
 
-    mlflow.log_metric("accuracy", acc)
-    mlflow.log_metric("precision", prec)
-    mlflow.log_metric("recall", rec)
+# Logging hasil ke MLflow
+mlflow.log_param("n_estimators", 100)
+mlflow.log_metric("accuracy", acc)
+mlflow.log_metric("precision", prec)
+mlflow.log_metric("recall", rec)
 
-    mlflow.sklearn.log_model(model, "model")
+mlflow.sklearn.log_model(model, "model")
 
-    print(f"✅ Accuracy: {acc:.4f}, Precision: {prec:.4f}, Recall: {rec:.4f}")
-
+print(f"✅ Accuracy: {acc:.4f}, Precision: {prec:.4f}, Recall: {rec:.4f}")
 print("🎯 Model berhasil dilatih dan disimpan di artefak MLflow lokal!")
