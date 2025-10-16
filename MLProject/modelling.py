@@ -8,6 +8,11 @@ import numpy as np
 import os
 import platform
 
+# 🚫 Pastikan tidak ada tracking URI Windows yang terbawa
+if "MLFLOW_TRACKING_URI" in os.environ:
+    print(f"🔧 Menghapus tracking URI lama: {os.environ['MLFLOW_TRACKING_URI']}")
+    del os.environ["MLFLOW_TRACKING_URI"]
+
 # 1️⃣ Baca dataset hasil preprocessing
 data_path_local = os.path.join("MLProject", "titanicdataset_preprocessing", "train_preprocessed.csv")
 data_path_ci = os.path.join("titanicdataset_preprocessing", "train_preprocessed.csv")
@@ -39,7 +44,7 @@ if not is_ci:
     else:
         mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 else:
-    # 🤖 Mode CI/CD: biarkan MLflow CLI yang atur tracking URI
+    # 🤖 Mode CI/CD
     print("🟡 Mode CI/CD terdeteksi — gunakan konfigurasi MLflow bawaan.")
 
 # 5️⃣ Pastikan run dimulai hanya kalau lokal
