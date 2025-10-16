@@ -35,14 +35,15 @@ if platform.system() == "Windows":
 else:
     mlflow.set_tracking_uri("file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns")
 
-# 5️⃣ Cek apakah ada run aktif (CI) atau tidak (lokal)
-active_run = mlflow.active_run()
-if active_run is None:
+# 5️⃣ Cek apakah dijalankan dari MLflow CLI (CI/CD) atau manual
+if mlflow.active_run() is None:
+    # Lokal: buat experiment baru
     mlflow.set_experiment("RandomForest_CI")
-    run_context = mlflow.start_run(run_name="RandomForest_CI_Run")
+    mlflow.start_run(run_name="RandomForest_CI_Run")
 else:
-    # 🧠 Fix utama: gunakan nested=True supaya tidak bentrok dengan run luar
-    run_context = mlflow.start_run(run_name="Nested_Run", nested=True)
+    # CI: gunakan nested run agar tidak bentrok
+    mlflow.start_run(run_name="RandomForest_CI_SubRun", nested=True)
+
 
 # 6️⃣ Training model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
